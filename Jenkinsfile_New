@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+            git branch: 'main', url: 'https://github.com/devopsabh/springboot-java-poject.git'            }
+        }
+        stage('Compile') {
+            steps {
+                sh 'mvn compile'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+        
+        stage('Artifacts') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Deploy to Tomcat') {
+            steps {
+               deploy adapters: [tomcat9( credentialsId: 'credname', path: '', url: '')], contextPath: 'spring-boot-web', war: '**/*.war'            }
+        }
+       
+    }
+}
